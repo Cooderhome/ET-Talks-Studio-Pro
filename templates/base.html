@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ET-Talks Studio Pro – Professional YouTube Shorts creator. Download YouTube videos and convert them to vertical 1080×1920 Shorts for TikTok, Instagram Reels, and Facebook Reels.">
+  <title>{% block title %}ET-Talks Studio Pro{% endblock %}</title>
+
+  {# Favicon #}
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+
+  {# Bootstrap Icons CDN #}
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    crossorigin="anonymous"
+  >
+
+  {# Google Fonts (Inter + JetBrains Mono) #}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  >
+
+  {# Core CSS #}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/phone.css') }}">
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  {# ── Navbar ── #}
+  {% include 'components/navbar.html' %}
+
+  {# ── Main content ── #}
+  <main id="main-content" role="main">
+    {% block content %}{% endblock %}
+  </main>
+
+  {# ── Footer / status bar ── #}
+  {% include 'components/footer.html' %}
+
+  {# ── JavaScript ── #}
+  {# progress.js must load first so et:* events are available to app.js #}
+  <script src="{{ url_for('static', filename='js/progress.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/timeline.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/preview.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+
+  {% block extra_scripts %}{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,419 @@
+{# templates/components/sidebar.html – Left control panel #}
+
+<aside id="panel-left" class="panel" aria-label="Video controls" role="complementary">
+
+  <div class="panel-header">
+    <span class="panel-title">Controls</span>
+    <span class="badge badge-blue" id="sidebar-status-badge">Ready</span>
+  </div>
+
+  <div class="panel-body">
+
+    {# ============================================================
+       1. URL INPUT
+       ============================================================ #}
+    <div class="url-section">
+      <label class="form-label" for="url-input">YouTube URL</label>
+      <div class="url-input-row">
+        <div class="input-group-dark">
+          <span class="input-icon" aria-hidden="true"><i class="bi bi-youtube"></i></span>
+          <input
+            type="url"
+            id="url-input"
+            placeholder="https://youtube.com/watch?v=…"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="YouTube video URL"
+          >
+        </div>
+        <button
+          id="btn-fetch-info"
+          class="btn-secondary"
+          title="Fetch video info"
+          aria-label="Fetch video information"
+        >
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+      <button
+        id="btn-download-url"
+        class="btn-primary w-full mt-2"
+        aria-label="Download video"
+      >
+        <i class="bi bi-download"></i> Download
+      </button>
+    </div>
+
+    {# ============================================================
+       2. VIDEO INFO CARD
+       ============================================================ #}
+    <div id="video-info-card" class="video-info-card" role="region" aria-label="Video information">
+      <img id="vi-thumb" class="video-info-thumb" src="" alt="Video thumbnail" loading="lazy">
+      <div class="video-info-body">
+        <div id="vi-title" class="video-info-title">—</div>
+        <div class="video-meta-grid">
+          <div class="video-meta-item">
+            <span class="video-meta-label">Duration</span>
+            <span id="vi-duration" class="video-meta-value">—</span>
+          </div>
+          <div class="video-meta-item">
+            <span class="video-meta-label">Views</span>
+            <span id="vi-views" class="video-meta-value">—</span>
+          </div>
+          <div class="video-meta-item">
+            <span class="video-meta-label">Resolution</span>
+            <span id="vi-res" class="video-meta-value">—</span>
+          </div>
+          <div class="video-meta-item">
+            <span class="video-meta-label">FPS</span>
+            <span id="vi-fps" class="video-meta-value">—</span>
+          </div>
+          <div class="video-meta-item">
+            <span class="video-meta-label">Codec</span>
+            <span id="vi-codec" class="video-meta-value">—</span>
+          </div>
+          <div class="video-meta-item">
+            <span class="video-meta-label">Est. Size</span>
+            <span id="vi-size" class="video-meta-value">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    {# ============================================================
+       3. TITLE OVERLAY
+       ============================================================ #}
+    <div class="section-label"><i class="bi bi-type"></i> Title Overlay</div>
+
+    <div class="overlay-row">
+      <label class="form-label" for="overlay-title">Text</label>
+      <input
+        type="text"
+        id="overlay-title"
+        class="form-control-dark"
+        placeholder="Your Short title…"
+        maxlength="120"
+        aria-label="Title overlay text"
+      >
+    </div>
+
+    <div class="overlay-color-row">
+      <div class="color-input-wrap" title="Title color">
+        <input type="color" id="title-color" value="#ffffff" aria-label="Title text color">
+      </div>
+      <div style="flex:1;">
+        <label class="form-label" for="title-font-size">Size</label>
+        <div class="range-row">
+          <input type="range" id="title-font-size" class="range-dark" min="24" max="120" value="60" aria-label="Title font size">
+          <span class="range-value" id="title-size-val">60</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-3 mt-2">
+      <label class="flex items-center gap-2 text-sm" style="cursor:pointer;">
+        <input type="checkbox" id="title-shadow" checked>
+        <span>Shadow</span>
+      </label>
+      <label class="flex items-center gap-2 text-sm" style="cursor:pointer;">
+        <input type="checkbox" id="title-bg">
+        <span>Background</span>
+      </label>
+    </div>
+
+    <div class="mt-2">
+      <label class="form-label">Title Animation</label>
+      <div class="anim-grid" data-anim-group="title">
+        {% for anim in ['None','Fade','Slide','Pop','Zoom','Bounce','Typewriter'] %}
+        <button
+          class="anim-btn {{ 'active' if loop.first else '' }}"
+          data-anim="{{ anim.lower() }}"
+          aria-label="{{ anim }} animation"
+          aria-pressed="{{ 'true' if loop.first else 'false' }}"
+        >{{ anim }}</button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    {# ============================================================
+       4. SUBTITLE OVERLAY
+       ============================================================ #}
+    <div class="section-label"><i class="bi bi-type-h2"></i> Subtitle Overlay</div>
+
+    {# ──────────────────────────────────────────────────────────────────
+       TRANSCRIPT PASTE PANEL
+       How to get your transcript from YouTube:
+         1. Open the video on YouTube
+         2. Click ⋮ (three dots) → "Show Transcript"
+         3. Click "Toggle Timestamps" (top-right of panel)
+         4. Select All → Copy → Paste below
+    ─────────────────────────────────────────────────────────────────── #}
+    <div class="transcript-panel" id="transcript-panel">
+      <button class="transcript-panel-header w-full flex items-center justify-between" id="btn-toggle-transcript" aria-expanded="false" style="border: none; background: none; color: inherit; font: inherit; cursor: pointer; text-align: left; padding: 0;">
+        <div class="flex items-center gap-2">
+          <i class="bi bi-body-text"></i>
+          <span>Paste YouTube Transcript</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="badge badge-blue" id="transcript-status-badge" style="display:none">✓ Ready</span>
+          <i class="bi bi-chevron-down" id="transcript-chevron"></i>
+        </div>
+      </button>
+      
+      <div id="transcript-body" style="display:none; margin-top: 12px;">
+        <div class="transcript-how">
+          <i class="bi bi-info-circle"></i>
+          On YouTube → click <strong>⋮</strong> → <strong>Show Transcript</strong> → enable <strong>Timestamps</strong> → copy all → paste below.
+        </div>
+        <textarea
+          id="transcript-text"
+          class="transcript-textarea"
+          rows="6"
+          placeholder="0:00 ሰላም ወዳጆቼ&#10;0:03 እንኳን ደህና መጡ&#10;0:07 ዛሬ እንነጋገራለን..."
+          aria-label="YouTube transcript text"
+          spellcheck="false"
+        ></textarea>
+        <div class="transcript-actions">
+          <button id="btn-parse-transcript" class="btn-secondary w-full" aria-label="Parse transcript">
+            <i class="bi bi-check2-circle"></i> Parse Transcript
+          </button>
+          <button id="btn-clear-transcript" class="btn-icon" title="Clear" aria-label="Clear transcript">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+        <div id="transcript-error" class="transcript-error" style="display:none"></div>
+      </div>
+    </div>
+
+    <div class="overlay-row">
+      <label class="form-label" for="overlay-subtitle">Text</label>
+      <input
+        type="text"
+        id="overlay-subtitle"
+        class="form-control-dark"
+        placeholder="Optional subtitle…"
+        maxlength="120"
+        aria-label="Subtitle overlay text"
+      >
+    </div>
+
+    <div class="overlay-color-row">
+      <div class="color-input-wrap" title="Subtitle color">
+        <input type="color" id="subtitle-color" value="#e5e5e5" aria-label="Subtitle text color">
+      </div>
+      <div style="flex:1;">
+        <label class="form-label" for="subtitle-font-size">Size</label>
+        <div class="range-row">
+          <input type="range" id="subtitle-font-size" class="range-dark" min="16" max="80" value="36" aria-label="Subtitle font size">
+          <span class="range-value">36</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-2">
+      <label class="form-label">Subtitle Animation</label>
+      <div class="anim-grid" data-anim-group="subtitle">
+        {% for anim in ['None','Fade','Slide','Pop','Zoom','Bounce','Typewriter'] %}
+        <button
+          class="anim-btn {{ 'active' if loop.first else '' }}"
+          data-anim="{{ anim.lower() }}"
+          aria-label="{{ anim }} animation"
+        >{{ anim }}</button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    {# ============================================================
+       5. FONTS
+       ============================================================ #}
+    <div class="section-label"><i class="bi bi-fonts"></i> Font</div>
+    <label class="form-label" for="font-select">Font Family</label>
+    <select id="font-select" class="form-control-dark" aria-label="Font family">
+      {% for font in fonts %}
+      <option value="{{ font.name }}">{{ font.name }}</option>
+      {% endfor %}
+    </select>
+
+    <div class="divider"></div>
+
+    {# ============================================================
+       6. CROP MODE
+       ============================================================ #}
+    <div class="section-label"><i class="bi bi-aspect-ratio"></i> Crop Mode</div>
+    <div class="crop-mode-grid" role="group" aria-label="Crop mode selection">
+      <button class="crop-mode-btn" data-mode="fit" aria-label="Fit mode">
+        <span class="crop-mode-icon">📐</span>Fit
+      </button>
+      <button class="crop-mode-btn active" data-mode="blur_background" aria-label="Blur background mode">
+        <span class="crop-mode-icon">🌫️</span>Blur BG
+      </button>
+      <button class="crop-mode-btn" data-mode="center_crop" aria-label="Center crop mode">
+        <span class="crop-mode-icon">✂️</span>Crop
+      </button>
+    </div>
+
+    <div class="divider"></div>
+
+    {# ============================================================
+       6.5 VIDEO TEMPLATE
+       ============================================================ #}
+    <div class="section-label"><i class="bi bi-magic"></i> Video Template</div>
+    <select id="color-template" class="form-control-dark" aria-label="Color Template">
+      <option value="none">Normal (Original Colors)</option>
+      <option value="dark_reality">Dark Reality (Gritty, Dark)</option>
+      <option value="vibrant">Vibrant (High Saturation)</option>
+      <option value="cinematic">Cinematic (High Contrast)</option>
+    </select>
+
+    <div class="divider"></div>
+
+    {# ============================================================
+       7. LOGO UPLOAD
+       ============================================================ #}
+    <div class="section-label"><i class="bi bi-image"></i> Logo</div>
+    <div class="upload-area" role="button" aria-label="Upload logo image" tabindex="0">
+      <div class="upload-area-icon"><i class="bi bi-cloud-upload"></i></div>
+      <div class="upload-area-text">PNG / WebP / JPG (transparent)</div>
+      <div class="upload-area-filename" id="logo-filename"></div>
+      <input type="file" id="logo-upload" accept=".png,.jpg,.jpeg,.webp,.gif" aria-label="Logo file">
+    </div>
+
+    <div class="flex gap-2 mt-2">
+      <div style="flex:1;">
+        <label class="form-label" for="logo-position">Position</label>
+        <select id="logo-position" class="form-control-dark" aria-label="Logo position">
+          <option value="top_right">Top Right</option>
+          <option value="top_left">Top Left</option>
+          <option value="bottom_right">Bottom Right</option>
+          <option value="bottom_left">Bottom Left</option>
+          <option value="center">Center</option>
+        </select>
+      </div>
+    </div>
+    <div class="mt-2">
+      <label class="form-label" for="logo-opacity">Logo Opacity</label>
+      <div class="range-row">
+        <input type="range" id="logo-opacity" class="range-dark" min="0" max="1" step="0.05" value="1" aria-label="Logo opacity">
+        <span class="range-value">1</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    {# ============================================================
+       8. MUSIC UPLOAD
+       ============================================================ #}
+    <div class="section-label"><i class="bi bi-music-note-beamed"></i> Background Music</div>
+    <div class="upload-area" role="button" aria-label="Upload background music" tabindex="0">
+      <div class="upload-area-icon"><i class="bi bi-file-music"></i></div>
+      <div class="upload-area-text">MP3 / AAC / WAV / M4A</div>
+      <div class="upload-area-filename" id="music-filename"></div>
+      <input type="file" id="music-upload" accept=".mp3,.aac,.wav,.m4a,.ogg,.opus" aria-label="Music file">
+    </div>
+    <div class="mt-2">
+      <label class="form-label" for="music-volume">Music Volume</label>
+      <div class="range-row">
+        <input type="range" id="music-volume" class="range-dark" min="0" max="1" step="0.05" value="0.3" aria-label="Music volume">
+        <span class="range-value">0.3</span>
+      </div>
+    </div>
+    <div class="mt-2">
+      <label class="form-label" for="original-volume">Original Volume</label>
+      <div class="range-row">
+        <input type="range" id="original-volume" class="range-dark" min="0" max="1" step="0.05" value="1" aria-label="Original video volume">
+        <span class="range-value">1</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    {# ============================================================
+       9. WATERMARK
+       ============================================================ #}
+    <div class="section-label"><i class="bi bi-shield-check"></i> Watermark Text</div>
+    <input
+      type="text"
+      id="watermark-text"
+      class="form-control-dark"
+      placeholder="@yourbrand"
+      maxlength="60"
+      aria-label="Watermark text"
+    >
+
+    <div class="divider"></div>
+
+    {# ============================================================
+       10. QUALITY
+       ============================================================ #}
+    <div class="section-label"><i class="bi bi-sliders"></i> Quality</div>
+    <label class="form-label" for="quality-select">Quality Profile</label>
+    <select id="quality-select" class="form-control-dark" aria-label="Quality profile">
+      {% for key, profile in quality_profiles.items() %}
+      <option value="{{ key }}" {{ 'selected' if key == default_quality }}>
+        {{ profile.label }}
+      </option>
+      {% endfor %}
+    </select>
+
+    <div class="divider"></div>
+
+    {# ============================================================
+       11. RENDER BUTTON
+       ============================================================ #}
+    <button
+      id="btn-render"
+      class="btn-primary btn-render"
+      disabled
+      aria-label="Start render"
+    >
+      <i class="bi bi-film"></i> Render Short
+    </button>
+
+    <div class="text-xs text-muted text-center mt-2">
+      Output: 1080×1920 · H.264 · AAC · FastStart
+    </div>
+
+    <div class="divider"></div>
+
+    {# ============================================================
+       12. AUTO-SHORTS BUTTON
+       ============================================================ #}
+    <div class="section-label"><i class="bi bi-robot"></i> Auto-Shorts (Ollama)</div>
+    <div class="text-xs text-muted mb-2">
+      Automatically find highlights and generate multiple Shorts from the downloaded video using your local Ollama AI.
+    </div>
+    <div class="flex gap-2 mb-2">
+      <input type="text" id="ollama-model" class="form-control-dark" placeholder="Model (e.g. llama3)" value="llama3" aria-label="Ollama model">
+    </div>
+    <button
+      id="btn-auto-shorts"
+      class="btn-secondary btn-render"
+      disabled
+      aria-label="Generate Auto-Shorts"
+    >
+      <i class="bi bi-magic"></i> Auto-Generate Shorts
+    </button>
+
+    {# Spacer at bottom so content isn't hidden behind footer #}
+    <div style="height: 20px; flex-shrink: 0;"></div>
+
+  </div>{# /panel-body #}
+</aside>
+
+{# Range value sync #}
+<script>
+  document.querySelectorAll('.range-dark').forEach(function (range) {
+    var display = range.nextElementSibling;
+    if (display && display.classList.contains('range-value')) {
+      range.addEventListener('input', function () {
+        display.textContent = range.value;
+      });
+    }
+  });
+</script>

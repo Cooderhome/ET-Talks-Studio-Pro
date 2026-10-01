@@ -1,0 +1,115 @@
+{# templates/components/navbar.html – Top navigation bar #}
+<nav class="navbar-studio" role="navigation" aria-label="Main navigation">
+
+  {# Brand #}
+  <a href="/" class="navbar-brand" aria-label="ET-Talks Studio Pro home">
+    <div class="navbar-logo-icon" aria-hidden="true">🎬</div>
+    <div>
+      <div class="navbar-brand-name">ET-Talks Studio Pro</div>
+      <div class="navbar-brand-sub">YouTube Shorts Creator</div>
+    </div>
+  </a>
+
+  <div class="navbar-spacer"></div>
+
+  {# GPU badge #}
+  <div class="flex items-center gap-2">
+    <span class="badge badge-muted" id="gpu-badge" title="Detected GPU / encoder">
+      <i class="bi bi-cpu"></i> Detecting…
+    </span>
+  </div>
+
+  {# Actions #}
+  <div class="navbar-actions">
+
+    {# Safe zone toggle #}
+    <button
+      id="safe-zone-toggle"
+      class="btn-icon"
+      title="Toggle safe zones"
+      data-tooltip="Safe zones"
+      aria-label="Toggle safe zone guides"
+    >
+      <i class="bi bi-bounding-box"></i>
+    </button>
+
+    {# Settings #}
+    <button
+      class="btn-icon"
+      title="Settings"
+      data-tooltip="Settings"
+      aria-label="Open settings"
+      id="btn-settings"
+    >
+      <i class="bi bi-gear"></i>
+    </button>
+
+    {# GitHub #}
+    <a
+      href="https://github.com/"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="btn-icon"
+      title="GitHub"
+      data-tooltip="GitHub"
+      aria-label="View source on GitHub"
+    >
+      <i class="bi bi-github"></i>
+    </a>
+
+    {# About #}
+    <button
+      class="btn-icon"
+      title="About"
+      data-tooltip="About"
+      id="btn-about"
+      aria-label="About ET-Talks Studio Pro"
+    >
+      <i class="bi bi-info-circle"></i>
+    </button>
+
+    {# Theme toggle #}
+    <button
+      id="theme-toggle"
+      class="theme-toggle"
+      title="Toggle light / dark theme"
+      aria-label="Toggle color theme"
+    ></button>
+
+  </div>
+</nav>
+
+{# About modal #}
+<div id="about-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="about-title">
+  <div class="modal-box">
+    <div class="flex items-center gap-3 mb-3">
+      <div class="navbar-logo-icon">🎬</div>
+      <div>
+        <h2 id="about-title" class="text-xl">ET-Talks Studio Pro</h2>
+        <div class="text-xs text-muted">v1.0.0 · YouTube Shorts Creator</div>
+      </div>
+    </div>
+    <p class="text-sm text-secondary" style="line-height:1.7;">
+      A professional-grade tool for converting YouTube videos into vertical Shorts
+      for YouTube, TikTok, Instagram Reels, and Facebook Reels.
+      Built with Flask, FFmpeg, yt-dlp, and vanilla JavaScript.
+    </p>
+    <div class="divider"></div>
+    <div class="flex gap-2" style="justify-content:flex-end;">
+      <button class="btn-secondary" id="about-close">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const modal    = document.getElementById('about-modal');
+    const openBtn  = document.getElementById('btn-about');
+    const closeBtn = document.getElementById('about-close');
+    openBtn?.addEventListener('click',  () => modal.classList.remove('hidden'));
+    closeBtn?.addEventListener('click', () => modal.classList.add('hidden'));
+    modal?.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.add('hidden');
+    });
+  })();
+</script>

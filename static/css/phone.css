@@ -1,0 +1,447 @@
+/* =========================================================
+   phone.css – Phone mockup frame & preview overlay styles
+   ========================================================= */
+
+/* ============================================================
+   PHONE FRAME CONTAINER
+   ============================================================ */
+.phone-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 16px 12px 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.phone-wrap {
+  position: relative;
+  /* 9:16 aspect ratio maintained via JS / CSS */
+  flex-shrink: 0;
+}
+
+/* ----------------------------------------
+   The phone frame itself (CSS-drawn)
+   ---------------------------------------- */
+.phone-frame {
+  position: relative;
+  border-radius: 44px;
+  background: linear-gradient(145deg, #2A2A2F, #18181B);
+  box-shadow:
+    0 0 0 2px #3F3F46,
+    0 0 0 3px #09090B,
+    0 30px 80px rgba(0,0,0,0.8),
+    inset 0 0 0 1px rgba(255,255,255,0.04);
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Notch / Dynamic Island */
+.phone-notch {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 28px;
+  background: #09090B;
+  border-radius: 20px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.phone-notch::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #1A1A1F;
+  border: 1px solid #27272A;
+}
+.phone-notch::after {
+  content: '';
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #16A34A;
+  box-shadow: 0 0 6px rgba(22,163,74,0.8);
+}
+
+/* Side buttons */
+.phone-frame::before {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: 80px;
+  width: 3px;
+  height: 60px;
+  background: #27272A;
+  border-radius: 0 3px 3px 0;
+  box-shadow: 0 70px 0 #27272A;
+}
+.phone-frame::after {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 60px;
+  width: 3px;
+  height: 40px;
+  background: #27272A;
+  border-radius: 3px 0 0 3px;
+  box-shadow: 0 50px 0 #27272A, 0 100px 0 #27272A;
+}
+
+/* ----------------------------------------
+   Screen area inside the phone
+   ---------------------------------------- */
+.phone-screen {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  border-radius: 34px;
+  background: #000;
+  overflow: hidden;
+}
+
+/* The actual video element */
+.phone-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+/* Canvas overlay for text/logo preview */
+.phone-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 5;
+}
+
+/* ----------------------------------------
+   Safe zone guides
+   ---------------------------------------- */
+.safe-zone-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Top safe area */
+.safe-zone-overlay::before {
+  content: '';
+  position: absolute;
+  top: 10%;
+  left: 5%;
+  right: 5%;
+  height: 1px;
+  background: rgba(37, 99, 235, 0.4);
+  border-top: 1px dashed rgba(37, 99, 235, 0.4);
+}
+
+/* Bottom safe area */
+.safe-zone-overlay::after {
+  content: '';
+  position: absolute;
+  bottom: 12%;
+  left: 5%;
+  right: 5%;
+  height: 1px;
+  background: rgba(37, 99, 235, 0.4);
+  border-top: 1px dashed rgba(37, 99, 235, 0.4);
+}
+
+/* Safe zone visibility toggle */
+.safe-zones-hidden .safe-zone-overlay { display: none; }
+
+/* ----------------------------------------
+   Overlay text preview (mirrors ffmpeg output)
+   ---------------------------------------- */
+.preview-title-overlay,
+.preview-subtitle-overlay {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  text-align: center;
+  pointer-events: none;
+  z-index: 7;
+  font-weight: 700;
+  line-height: 1.2;
+  word-break: break-word;
+  transition: all 0.15s ease;
+}
+.preview-title-overlay {
+  bottom: 18%;
+  font-size: clamp(14px, 4.5cqw, 26px);
+}
+.preview-subtitle-overlay {
+  bottom: 10%;
+  font-size: clamp(11px, 3.2cqw, 18px);
+  font-weight: 400;
+}
+
+/* ----------------------------------------
+   Status overlay (placeholder / empty state)
+   ---------------------------------------- */
+.phone-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--text-muted);
+  z-index: 3;
+  pointer-events: none;
+}
+.phone-placeholder-icon {
+  font-size: 40px;
+  opacity: 0.3;
+}
+.phone-placeholder-text {
+  font-size: 0.75rem;
+  text-align: center;
+  max-width: 80%;
+}
+
+/* ----------------------------------------
+   Playback controls (minimal overlay)
+   ---------------------------------------- */
+.phone-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  border-radius: 0 0 34px 34px;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+.phone-screen:hover .phone-controls { opacity: 1; }
+
+.phone-progress {
+  width: 100%;
+  height: 3px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 99px;
+  cursor: pointer;
+  position: relative;
+}
+.phone-progress-fill {
+  height: 100%;
+  background: var(--accent-green);
+  border-radius: 99px;
+  pointer-events: none;
+  transition: width 0.1s linear;
+}
+
+.phone-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.phone-play-btn {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background var(--transition-fast);
+}
+.phone-play-btn:hover { background: rgba(255,255,255,0.2); }
+.phone-time-label {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.7);
+  font-family: var(--font-mono);
+  margin-left: auto;
+}
+
+/* ----------------------------------------
+   Phone toolbar (controls above phone)
+   ---------------------------------------- */
+.phone-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+  width: 100%;
+  flex-shrink: 0;
+}
+.phone-toolbar-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+.phone-toolbar-spacer { flex: 1; }
+
+/* Zoom indicator */
+.zoom-badge {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  background: var(--bg-elevated);
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+}
+
+/* ============================================================
+   TIMELINE STRIP (below phone)
+   ============================================================ */
+.timeline-section {
+  width: 100%;
+  flex-shrink: 0;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  padding: 10px 12px;
+}
+
+.timeline-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.timeline-track {
+  position: relative;
+  height: 56px;
+  background: var(--bg-base);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+}
+
+.timeline-thumbs {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+.timeline-thumb-img {
+  flex: 1;
+  object-fit: cover;
+  height: 100%;
+  min-width: 0;
+  display: block;
+}
+.timeline-thumb-placeholder {
+  flex: 1;
+  height: 100%;
+  background: var(--bg-elevated);
+  border-right: 1px solid var(--border);
+}
+
+/* Selection range highlight */
+.timeline-selection {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgba(37, 99, 235, 0.15);
+  border: 1px solid var(--accent-blue);
+  pointer-events: none;
+}
+
+/* Drag handles */
+.timeline-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  background: var(--accent-blue);
+  border-radius: 2px;
+  cursor: ew-resize;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.timeline-handle::after {
+  content: '';
+  width: 2px;
+  height: 20px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 1px;
+}
+#handle-start { left: 0; border-radius: 2px 0 0 2px; }
+#handle-end   { right: 0; border-radius: 0 2px 2px 0; }
+
+/* Playhead */
+.timeline-playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent-green);
+  pointer-events: none;
+  z-index: 3;
+}
+.timeline-playhead::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 10px;
+  height: 10px;
+  background: var(--accent-green);
+  border-radius: 50%;
+}
+
+/* Timestamp labels */
+.timeline-timestamps {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* Trim info */
+.trim-info {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 6px;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+.trim-info span { color: var(--text-primary); }

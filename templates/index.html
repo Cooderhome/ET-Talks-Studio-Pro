@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+
+{% block title %}ET-Talks Studio Pro – YouTube Shorts Creator{% endblock %}
+
+{% block content %}
+<div class="studio-layout">
+
+  {# ================================================================
+     LEFT PANEL – Controls
+     ================================================================ #}
+  {% include 'components/sidebar.html' %}
+
+  {# ================================================================
+     CENTER PANEL – Phone Preview + Timeline
+     ================================================================ #}
+  <section id="panel-center" class="panel" aria-label="Video preview">
+
+    {# Toolbar #}
+    <div class="phone-toolbar">
+      <span class="panel-title phone-toolbar-label">Preview</span>
+      <span class="badge badge-muted zoom-badge" id="zoom-badge">9:16</span>
+      <div class="phone-toolbar-spacer"></div>
+      <button
+        class="btn-icon"
+        id="btn-safe-zones-center"
+        title="Toggle safe zones"
+        aria-label="Toggle safe zone guides"
+        data-tooltip="Safe zones"
+      >
+        <i class="bi bi-bounding-box"></i>
+      </button>
+      <button
+        class="btn-icon"
+        id="btn-fullscreen-preview"
+        title="Fullscreen"
+        aria-label="Fullscreen preview"
+        data-tooltip="Fullscreen"
+      >
+        <i class="bi bi-fullscreen"></i>
+      </button>
+    </div>
+
+    {# Phone stage (scrollable if viewport too small) #}
+    <div class="phone-stage" id="phone-stage">
+      <div class="phone-wrap" id="phone-wrap">
+        <div class="phone-frame">
+
+          {# Dynamic island / notch #}
+          <div class="phone-notch" aria-hidden="true"></div>
+
+          {# Screen #}
+          <div class="phone-screen" id="phone-screen">
+
+            {# Placeholder (shown before video loaded) #}
+            <div class="phone-placeholder" id="phone-placeholder" aria-label="No video loaded">
+              <div class="phone-placeholder-icon"><i class="bi bi-play-circle"></i></div>
+              <div class="phone-placeholder-text">
+                Download a video to<br>see the live preview
+              </div>
+            </div>
+
+            {# Video element #}
+            <video
+              id="phone-video"
+              class="phone-video"
+              playsinline
+              loop
+              style="display:none;"
+              aria-label="Video preview"
+            ></video>
+
+            {# Canvas overlay for text/logo preview #}
+            <canvas
+              id="phone-canvas"
+              class="phone-canvas"
+              aria-hidden="true"
+            ></canvas>
+
+            {# Safe zone guides #}
+            <div class="safe-zone-overlay" aria-hidden="true"></div>
+
+            {# Playback controls #}
+            <div class="phone-controls" aria-label="Playback controls">
+              <div class="phone-progress" id="phone-progress" role="slider" aria-label="Video progress" tabindex="0">
+                <div class="phone-progress-fill" id="phone-progress-fill"></div>
+              </div>
+              <div class="phone-controls-row">
+                <button class="phone-play-btn" id="phone-play-btn" aria-label="Play / Pause">
+                  <i class="bi bi-play-fill"></i>
+                </button>
+                <span class="phone-time-label" id="phone-time-label">00:00 / 00:00</span>
+              </div>
+            </div>
+
+          </div>{# /phone-screen #}
+        </div>{# /phone-frame #}
+      </div>{# /phone-wrap #}
+    </div>{# /phone-stage #}
+
+    {# ---- Timeline ---- #}
+    <div class="timeline-section" aria-label="Timeline">
+      <div class="timeline-label">
+        <i class="bi bi-film" aria-hidden="true"></i> Timeline
+      </div>
+
+      <div class="timeline-track" id="timeline-track" role="slider" aria-label="Video timeline trim" tabindex="0">
+        {# Thumbnail strip #}
+        <div id="timeline-thumbs" class="timeline-thumbs" aria-hidden="true">
+          {# Placeholder cells #}
+          {% for i in range(20) %}
+          <div class="timeline-thumb-placeholder" aria-hidden="true"></div>
+          {% endfor %}
+        </div>
+
+        {# Selection highlight #}
+        <div id="timeline-selection" class="timeline-selection" aria-hidden="true"></div>
+
+        {# Handles #}
+        <div id="handle-start" class="timeline-handle" role="slider" aria-label="Trim start" tabindex="0" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+        <div id="handle-end"   class="timeline-handle" role="slider" aria-label="Trim end"   tabindex="0" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" style="left:calc(100% - 8px)"></div>
+
+        {# Playhead #}
+        <div id="timeline-playhead" class="timeline-playhead" aria-hidden="true"></div>
+      </div>
+
+      {# Timestamp labels #}
+      <div id="timeline-timestamps" class="timeline-timestamps" aria-hidden="true">
+        <span>00:00</span>
+        <span>—</span>
+        <span>—</span>
+        <span>—</span>
+        <span>—</span>
+        <span>—</span>
+      </div>
+
+      {# Trim info #}
+      <div class="trim-info">
+        <span>In: <span id="trim-start-display">00:00</span></span>
+        <span>Out: <span id="trim-end-display">—</span></span>
+      </div>
+    </div>{# /timeline-section #}
+
+  </section>{# /panel-center #}
+
+  {# ================================================================
+     RIGHT PANEL – Downloads & History
+     ================================================================ #}
+  <aside id="panel-right" class="panel" aria-label="Downloads and history">
+
+    {# Tab buttons #}
+    <div class="panel-header" style="flex-direction:column; gap:8px; padding-bottom:0;">
+      <div class="flex items-center gap-2" style="width:100%;">
+        <span class="panel-title">Library</span>
+        <button
+          class="btn-icon"
+          id="btn-refresh-history"
+          title="Refresh"
+          aria-label="Refresh"
+          style="margin-left:auto;"
+        ><i class="bi bi-arrow-clockwise"></i></button>
+      </div>
+      <div class="tab-bar" role="tablist">
+        <button class="tab-btn active" data-tab="downloads" role="tab" aria-selected="true" id="tab-downloads">
+          <i class="bi bi-folder2-open"></i> Downloads
+        </button>
+        <button class="tab-btn" data-tab="history" role="tab" aria-selected="false" id="tab-history">
+          <i class="bi bi-clock-history"></i> Renders
+        </button>
+      </div>
+    </div>
+
+    <div class="panel-body" style="gap:12px; padding-top:8px;">
+
+      {# ---- Downloads tab ---- #}
+      <div id="tab-panel-downloads" class="tab-panel" role="tabpanel">
+        <div class="search-wrap">
+          <i class="bi bi-search search-icon" aria-hidden="true"></i>
+          <input type="search" id="downloads-search" class="form-control-dark"
+                 placeholder="Filter files…" aria-label="Filter downloads">
+        </div>
+        <div id="downloads-list" class="history-list" role="list" aria-label="Downloaded videos">
+          <div class="empty-state">
+            <div class="empty-state-icon"><i class="bi bi-folder2-open"></i></div>
+            <div class="empty-state-text">No downloads yet.</div>
+          </div>
+        </div>
+      </div>
+
+      {# ---- History tab ---- #}
+      <div id="tab-panel-history" class="tab-panel hidden" role="tabpanel">
+        <div class="search-wrap">
+          <i class="bi bi-search search-icon" aria-hidden="true"></i>
+          <input type="search" id="history-search" class="form-control-dark"
+                 placeholder="Search renders…" aria-label="Search render history">
+        </div>
+        <div id="history-list" class="history-list" role="list" aria-label="Rendered shorts list">
+          <div class="empty-state">
+            <div class="empty-state-icon"><i class="bi bi-camera-video"></i></div>
+            <div class="empty-state-text">No renders yet.<br>Create your first Short!</div>
+          </div>
+        </div>
+      </div>
+
+    </div>{# /panel-body #}
+
+  </aside>{# /panel-right #}
+
+</div>{# /studio-layout #}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Phone size: fill available height maintaining 9:16
+  (function sizPhone() {
+    const stage = document.getElementById('phone-stage');
+    const wrap  = document.getElementById('phone-wrap');
+    if (!stage || !wrap) return;
+
+    function resize() {
+      const availH = stage.clientHeight - 16;
+      const availW = stage.clientWidth  - 16;
+      const byH = availH;
+      const byW = availW * (16 / 9);
+      const h = Math.min(byH, byW);
+      const w = h * (9 / 16);
+      wrap.style.width  = `${Math.floor(w)}px`;
+      wrap.style.height = `${Math.floor(h)}px`;
+      document.getElementById('zoom-badge').textContent =
+        `${Math.floor(w)}×${Math.floor(h)}`;
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+    new ResizeObserver(resize).observe(stage);
+  })();
+
+  // Refresh history button
+  document.getElementById('btn-refresh-history')?.addEventListener('click', () => {
+    if (typeof loadHistory === 'function') loadHistory();
+  });
+
+  // Fullscreen preview
+  document.getElementById('btn-fullscreen-preview')?.addEventListener('click', () => {
+    const screen = document.getElementById('phone-screen');
+    if (screen?.requestFullscreen) screen.requestFullscreen();
+  });
+</script>
+{% endblock %}
